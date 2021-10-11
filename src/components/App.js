@@ -40,22 +40,45 @@ class App extends Component {
 		this.setState({account: accounts[0]});
 
     //Get network ID
+		const networkId = await web3.eth.net.getId();
     //Get network data
-    //Check if net data exists, then
-      //Assign dvideo contract to a variable
-      //Add dvideo to the state
+		const networkData = DVideo.networks[networkId];
 
-      //Check videoAmounts
+    //Check if net data exists, then
+		if(networkData){
+			//Assign dvideo contract to a variable
+			const dVideo = new web3.eth.Contract(DVideo.abi, DVideo.networks[networkId].address)
+      //Add dvideo to the state
+			this.setState({dVideo})
+
+      //Get videoAmounts from blockchain
+			const videosCount = await dVideo.methods.videoCount().call()
       //Add videAmounts to the state
+      this.setState({ videosCount })
 
       //Iterate throught videos and add them to the state (by newest)
-
+      // Load videos, sort by newest
+      for (var i=videosCount; i>=1; i--) {
+        const video = await dVideo.methods.videos(i).call()
+        this.setState({
+          videos: [...this.state.videos, video]
+        })
+      }
 
       //Set latest video and it's title to view as default 
       //Set loading state to false
+			const latest = await dVideo.methods.videos(videosCount).call()
+			this.setState({
+				currentHash: latest.hash,
+				currentTitle: latest.title
+			})
+			this.setState({ loading: false})
 
       //If network data doesn't exisits, log error
-  }
+  	} else {
+			window.alert('The contract not deployed to the detected network')
+		}
+	}
 
   //Get video
   captureFile = event => {
@@ -75,9 +98,13 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      loading: false,
-			account: '',
-      //set states
+      buffer: null,
+      account: '',
+      dvideo: null,
+      videos: [],
+      loading: true,
+      currentHash: null,
+      currentTitle: null
     }
 
     //Bind functions
