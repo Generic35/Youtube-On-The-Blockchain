@@ -35,6 +35,9 @@ class App extends Component {
     const web3 = window.web3
     //Load accounts
     //Add first account the the state
+		const accounts = await web3.eth.getAccounts()
+		console.log(accounts)
+		this.setState({account: accounts[0]});
 
     //Get network ID
     //Get network data
@@ -72,7 +75,8 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      loading: false
+      loading: false,
+			account: '',
       //set states
     }
 
@@ -83,7 +87,7 @@ class App extends Component {
     return (
       <div>
         <Navbar 
-          //Account
+          account={this.state.account} 
         />
         { this.state.loading
           ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
