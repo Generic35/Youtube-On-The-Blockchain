@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import Identicon from 'identicon.js';
 import dvideo from '../dvideo.png'

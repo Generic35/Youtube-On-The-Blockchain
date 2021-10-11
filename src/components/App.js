@@ -1,3 +1,5 @@
+
+/* eslint-disable */
 import React, { Component } from 'react';
 import DVideo from '../abis/DVideo.json'
 import Navbar from './Navbar'
